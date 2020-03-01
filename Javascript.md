@@ -75,7 +75,7 @@ typeof(infinity);//-->undefined
    a = 100; //赋值
    
    var a = 10, //逗号
-   		b = 20,
+       b = 20,
        c; //同时声明多个变量
    ```
 
@@ -105,7 +105,7 @@ typeof(infinity);//-->undefined
      var e = null;         //5. 占位(typeof(e)是object)
      
      var arr = [1,2,3,false,"abc"]  //6. Array，typeof(arr)是object, 使用arr.isArray来判断数组
-     var obj = {						//7. Object
+     var obj = {                    //7. Object
        key  : values,//注意是逗号
        name : "xiaoliu",
        age  :  16,
@@ -113,7 +113,7 @@ typeof(infinity);//-->undefined
          age--;
        }
      }
-     function abc(){				//8. function
+     function abc(){                //8. function
        var a = 2;
      }
      ```
@@ -138,7 +138,8 @@ typeof(infinity);//-->undefined
      ```javascript
      var arr = [1,2];
      var arr1 = arr;
-     arr = [1,3];  //arr被重新赋值，并没有在堆中改变原值，而是在堆中以一个新的存错单元所存的值，赋值给arr，arr保留其地址。
+     arr = [1,3];  
+     //arr被重新赋值，并没有在堆中改变原值，而是在堆中以一个新的存错单元所存的值，赋值给arr，arr保留其地址。
      //所以, arr = [1,2]，而arr1 = [1,3]
      ```
 
@@ -198,7 +199,8 @@ for (variable in object) {
 // for...of 语句
 for (variable of object)
   	statement
-// While for...in iterates over property names, for...of iterates over property values. for...in通过属性名来迭代；for...of通过属性值来迭代。
+//不同：for...in iterates over property names, for...of iterates over property values. 
+//for...in通过属性名来迭代；for...of通过属性值来迭代。
 
 //输入
 var score = parseInt(window.prompt("input:"));
@@ -234,7 +236,7 @@ console.log(score);
 1. 比较运算符：`>  <  >=  <=  ==  !=` 输出结果为**boolean值**。
 
    ```javascript
-   //字符串相比，是字符串首字母的ascii码相比较
+   //>  <  >=  <=
    var a = "a" > "b" //---> a为false;
    var a = "1" > "8" //---> a为false;
    var a = "feng" > "deng" //---> true.
@@ -244,6 +246,8 @@ console.log(score);
    var a = Infinity == Infinity; //true
    var a = NaN == NaN; //false（NaN不等于任何数，包括自己）
    ```
+
+   * `> <` ：字符串相比时，是其首字母的ascii码相比较
 
 2. 逻辑运算符：`&&  ||  !` 输出结果为**真实值**。
 
@@ -258,11 +262,12 @@ console.log(score);
    ```
 
    ```javascript
-   //短路语句：
+   //应用延伸：
+   //1.用&&短路语句：
    var data = ...;
    data && fn(data) //如果data成功接收，则执行后面的function，比if写法更方便
    
-   //用或写兼容：
+   //2.用||写兼容：
    div.onclick = function(e){
      //e表示一个事件对象
      //非IE浏览器，直接用e就可以读取，但IE中，必须用window.event
@@ -280,43 +285,79 @@ console.log(score);
 
 ### typeof()和类型转换
 
-|      |      typeof()       |   result   |
-| :--: | :-----------------: | :--------: |
-|  1   |  typeof( number )   |   number   |
-|  2   |  typeof( boolean )  |  boolean   |
-|  3   |  typeof( string )   |   string   |
-|  4   | typeof( undefiend ) | undefiend  |
-|  5   |   typeof( null )    | **object** |
-|  6   |   typeof( array )   | **object** |
-|  7   |  typeof( object )   | **object** |
-|  8   | typeof( function )  |  function  |
-|  9   | typeof( typeof(1) ) |   string   |
-
-1. number()
-
 ```javascript
-Number();     		//0
-Number(123);  		//123
-Number(-Infinity);//-Infinity
-Number(NaN);  		//NaN
-Number("123");    //123  (string)
-Number("100abc"); //NaN  (string)
-Number("");       //0
-Number(true);     //1
-Number(undefined);//NaN
-Number([1,2,3]);  //NaN  (array)
-Number({});				//NaN  (object)
-Number(null);     //0
-Number(function(){});//NaN  (function)
+typeof();             //报错：Unexpected token ')'
+typeof(123);          //1 number
+typeof(true);         //2 boolean
+typeof("");           //3 string
+typeof(undefined);    //4 undefined
+typeof(null);         //5 object
+typeof([1,2,3]);      //6 object    //(array)
+typeof({});           //7 object    //(object)
+typeof(function(){}); //8 function  //function)
+typeof(for(){});      //报错
+typeof(typeof(1));    //string
 ```
 
+* 1 - 5原始值，6 - 8引用值。
 
+1. **Number(mix)** - Convert different object values to their numbers。
 
+   ```javascript
+   Number();         //==0      (空)
+   Number(123);      //==123    (number)
+   Number(-Infinity);//==-Infinity    (number - Infinity)
+   Number(NaN);  		//==NaN    (number - NaN)
+   Number("456");    //==456    (string是纯数字的，可以转为数字，否则NaN)
+   Number("100abc"); //==NaN    (string)
+   Number("");       //==0      (string - 空串)
+   Number(true);     //==1      (boolean)
+   Number(undefined);//==NaN    (未赋值)
+   Number([1,2,3]);  //==NaN    (array)
+   Number({});       //==NaN    (object)
+   Number(null);     //==0
+   Number(function(){});//==NaN  (function)
+   ```
 
+   * 以上输出结果，typeof()都是number。
 
+2. **parseInt(string, radix)** - 将一个字符串 string 转换为 radix 进制的整数， radix 为介于2-36之间的数。
 
+   ```javascript
+   parseInt();     		//==NaN    (空)
+   parseInt(123);  		//==123    (number)
+   parseInt(-Infinity);//==NaN    (number - Infinity)
+   parseInt(NaN);  		//==NaN    (number - NaN)
+   parseInt("456");    //==456    (string是纯数字的，可以转为数字，否则NaN)
+   parseInt("100abc"); //==100    (string - 开头有数字)
+   parseInt("a100bc"); //==NaN    (string - 开头无数字)
+   parseInt("");       //==NaN    (string - 空串)
+   parseInt(true);     //==NaN    (boolean)
+   parseInt(undefined);//==NaN    (未赋值)
+   parseInt([1.9,2,3]);//==1      (array)
+   parseInt({});				//==NaN    (object)
+   parseInt(null);     //==NaN
+   parseInt(function(){});//==NaN  (function)
+   ```
 
+   * 注意，能转为整数的有：数字，字符串开头是数字的，array开头是数字的。看到数字位，遇到点停止。
 
+   * parseInt向下取整。`Math.floor()`向下取整，`Math.ceil()`向上取整，`Math.round()`四舍五入取整。
+   * 以上输出结果，typeof()都是number。
+
+3. parseFloat(string) - 识别到最后一个数字位，且只能识别一个点。
+
+   ```javascript
+   parseFloat("1.2.4flos"); //==1.2  typeof(a)==number
+   parseFloat(-Infinity);   //==-Infinity
+   parseFloat("456abc");    //==456
+   parseFloat("a100bc");    //==NaN
+   parseInt([1.9,2,3]);     //==1.9
+   ```
+
+   * 猜想：parseInt(string)的意思是不是先把内容转化成string，再Int。为了证明猜想，先看看toString()是怎么做的。
+
+4. toString(radix) - 
 
 
 
