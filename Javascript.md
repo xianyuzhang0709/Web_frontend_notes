@@ -22,7 +22,7 @@
 
 **Firefox4.0** leagerMonkey
 
-**主流浏览器：**
+**主流浏览器：**IE，Chrome，Firefox，Opera，Safari等（必须有独立研发的内核才能算）。
 
 | 主流浏览器 |     内核     |
 | :--------: | :----------: |
@@ -32,29 +32,23 @@
 |   Opera    |    presto    |
 |   Safari   |    webkit    |
 
-IE，Chrome，Firefox，Opera，Safari等（必须有独立研发的内核）。
-
 ### JS特点：
 
-解释型语言 —— 跨平台；
+1. 解释型语言 —— 跨平台；
 
-单线程（但能呈现同步执行的运行效果）；
+2. 单线程（但能呈现同步执行的运行效果）；
 
-ECMA标准 —— 定义了JS的统一标准。
+3. ECMA标准 —— 定义了JS的统一标准。
 
-[1]: Js_reference.md	"什么是解释型语言"
+4. case-sensitive. 大小写敏感。所以：只有true，没有True
 
-case-sensitive. 大小写敏感。所以：只有true，没有True
-
-```javascript
-typeof(true);//-->boolean 
-typeof(True);//-->undefined
-
-typeof(-Infinity);//-->-Infinity
-typeof(infinity);//-->undefined
-```
-
-
+   ```javascript
+   typeof(true);     //boolean 
+   typeof(True);     //undefined
+   
+   typeof(-Infinity);//-Infinity
+   typeof(infinity); //undefined
+   ```
 
 ### JS三阶段：
 
@@ -71,12 +65,12 @@ typeof(infinity);//-->undefined
 1. 变量（variable）
 
    ```javascript
-   var a; //变量声明
-   a = 100; //赋值
+   var a;      //变量声明
+   a = 100;    //赋值
    
-   var a = 10, //逗号
+   var a = 10, //(逗号)
        b = 20,
-       c; //同时声明多个变量
+       c;      //同时声明多个变量
    ```
 
    * 变量命名规则：
@@ -98,11 +92,11 @@ typeof(infinity);//-->undefined
    * 定义：
 
      ```javascript
-     var a = 123;          //1. number
-     var b = "";           //2. string
-     var c = true;//false  //3. boolean (注意都是小写)
-     var d;                //4. undefined.声明未赋值，typeof(d)是undefined;
-     var e = null;         //5. 占位(typeof(e)是object)
+     var a = 123;                   //1. number
+     var b = "";                    //2. string
+     var c = true;                  //3. boolean (注意true、false都是小写)
+     var d;                         //4. undefined.声明未赋值，typeof(d)是undefined;
+     var e = null;                  //5. 占位(typeof(e)是object)
      
      var arr = [1,2,3,false,"abc"]  //6. Array，typeof(arr)是object, 使用arr.isArray来判断数组
      var obj = {                    //7. Object
@@ -216,18 +210,28 @@ console.log(score);
 * ` +=  -=  /=  *=  %=`
 
 1.  `+` （自左向右）
+
    * 数学运算、字符串连接
    * 任何数据类型 + 字符串 = 字符串
-   * 隐式：不能运算的，先number()，再运算
-     * `"a"+1+1` ---> `"a11"`
-     * `1+1+"a"+1` ---> `"2a1"`
+   * 隐式类型转换：不能用`+`运算的，先number()，再运算
+
+   ```javascript
+   var a = "a"+1+1;       //a == "a11"
+   var b = 1+1+"a"+1;     //b == "2a1";
+   ```
 
 2. `/`
-   + `1/0` ---> `Infinity` （Infinity是number）
-   + `-1/0` ---> `-Infinity`
-   + `0/0` ---> `NaN`  (NaN是number)
 
+   ```javascript
+   var a = 1/0;           //a == Infinity
+   var b = -1/0;          //b == -Infinity
+   var c = 0/0;           //c == NaN
+   var d = 1/Infinity;    //d == 0
+   var e = 1/-Infinity;   //d == -0
+   typeof(-0);            //number
+   ```
 
+   
 
 ### JS运算符：
 
@@ -237,14 +241,14 @@ console.log(score);
 
    ```javascript
    //>  <  >=  <=
-   var a = "a" > "b" //---> a为false;
-   var a = "1" > "8" //---> a为false;
-   var a = "feng" > "deng" //---> true.
+   var a = "a" > "b"               //false;
+   var a = "1" > "8"               //false;
+   var a = "feng" > "deng"         //true;
    
    //== 等于
    var a = undefined == undefined; //true
-   var a = Infinity == Infinity; //true
-   var a = NaN == NaN; //false（NaN不等于任何数，包括自己）
+   var a = Infinity == Infinity;   //true
+   var a = NaN == NaN;             //false（NaN不等于任何数，包括自己）
    ```
 
    * `> <` ：字符串相比时，是其首字母的ascii码相比较
@@ -254,8 +258,8 @@ console.log(score);
    ```javascript
    //&& 且
    //左→右，依次判断,全为true时，返回最后一个表达式的值。
-   var a = 1 && 2+2; //4
-   var a = 0 && 2+2; //0  第一个表达式为false，返回第一个表达式的值。
+   var a = 1 && 2+2;               //4
+   var a = 0 && 2+2;               //0  第一个表达式为false，返回第一个表达式的值。
    
    //|| 或
    //左→右，依次判断,只要发现true，返回该表达式的值。
@@ -286,17 +290,17 @@ console.log(score);
 ### typeof()和类型转换
 
 ```javascript
-typeof();             //报错：Unexpected token ')'
-typeof(123);          //1 number
-typeof(true);         //2 boolean
-typeof("");           //3 string
-typeof(undefined);    //4 undefined
-typeof(null);         //5 object
-typeof([1,2,3]);      //6 object    //(array)
-typeof({});           //7 object    //(object)
-typeof(function(){}); //8 function  //function)
-typeof(for(){});      //报错
-typeof(typeof(1));    //string
+typeof();                  //报错：Unexpected token ')'
+typeof(123);               //1 number
+typeof(true);              //2 boolean
+typeof("");                //3 string
+typeof(undefined);         //4 undefined
+typeof(null);              //5 object
+typeof([1,2,3]);           //6 object    //(array)
+typeof({});                //7 object    //(object)
+typeof(function(){});      //8 function  //function)
+typeof(for(){});           //报错
+typeof(typeof(1));         //string
 ```
 
 * 1 - 5原始值，6 - 8引用值。
@@ -304,19 +308,19 @@ typeof(typeof(1));    //string
 1. **Number(mix)** - Convert different object values to their numbers。
 
    ```javascript
-   Number();         //==0      (空)
-   Number(123);      //==123    (number)
-   Number(-Infinity);//==-Infinity    (number - Infinity)
-   Number(NaN);  		//==NaN    (number - NaN)
-   Number("456");    //==456    (string是纯数字的，可以转为数字，否则NaN)
-   Number("100abc"); //==NaN    (string)
-   Number("");       //==0      (string - 空串)
-   Number(true);     //==1      (boolean)
-   Number(undefined);//==NaN    (未赋值)
-   Number([1,2,3]);  //==NaN    (array)
-   Number({});       //==NaN    (object)
-   Number(null);     //==0
-   Number(function(){});//==NaN  (function)
+   Number();               //==0      (空)
+   Number(123);            //==123    (number)
+   Number(-Infinity);      //==-Infinity    (number - Infinity)
+   Number(NaN);            //==NaN    (number - NaN)
+   Number("456");          //==456    (string是纯数字的，可以转为数字，否则NaN)
+   Number("100abc");       //==NaN    (string)
+   Number("");             //==0      (string - 空串)
+   Number(true);           //==1      (boolean)
+   Number(undefined);      //==NaN    (未赋值)
+   Number([1,2,3]);        //==NaN    (array)
+   Number({});             //==NaN    (object)
+   Number(null);           //==0
+   Number(function(){});   //==NaN  (function)
    ```
 
    * 以上输出结果，typeof()都是number。
@@ -324,20 +328,20 @@ typeof(typeof(1));    //string
 2. **parseInt(string, radix)** - 将一个字符串 string 转换为 radix 进制的整数， radix 为介于2-36之间的数。
 
    ```javascript
-   parseInt();     		//==NaN    (空)
-   parseInt(123);  		//==123    (number)
-   parseInt(-Infinity);//==NaN    (number - Infinity)
-   parseInt(NaN);  		//==NaN    (number - NaN)
-   parseInt("456");    //==456    (string是纯数字的，可以转为数字，否则NaN)
-   parseInt("100abc"); //==100    (string - 开头有数字)
-   parseInt("a100bc"); //==NaN    (string - 开头无数字)
-   parseInt("");       //==NaN    (string - 空串)
-   parseInt(true);     //==NaN    (boolean)
-   parseInt(undefined);//==NaN    (未赋值)
-   parseInt([1.9,2,3]);//==1      (array)
-   parseInt({});				//==NaN    (object)
-   parseInt(null);     //==NaN
-   parseInt(function(){});//==NaN  (function)
+   parseInt();     	    	//==NaN    (空)
+   parseInt(123);  	    	//==123    (number)
+   parseInt(-Infinity);    //==NaN    (number - Infinity)
+   parseInt(NaN);  		    //==NaN    (number - NaN)
+   parseInt("456");        //==456    (string是纯数字的，可以转为数字，否则NaN)
+   parseInt("100abc");     //==100    (string - 开头有数字)
+   parseInt("a100bc");     //==NaN    (string - 开头无数字)
+   parseInt("");           //==NaN    (string - 空串)
+   parseInt(true);         //==NaN    (boolean)
+   parseInt(undefined);    //==NaN    (未赋值)
+   parseInt([1.9,2,3]);    //==1      (array)
+   parseInt({});				    //==NaN    (object)
+   parseInt(null);         //==NaN
+   parseInt(function(){}); //==NaN  (function)
    ```
 
    * 注意，能转为整数的有：数字，字符串开头是数字的，array开头是数字的。看到数字位，遇到点停止。
