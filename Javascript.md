@@ -34,7 +34,7 @@
 
 IE，Chrome，Firefox，Opera，Safari等（必须有独立研发的内核）。
 
-### js特点：
+### JS特点：
 
 解释型语言 —— 跨平台；
 
@@ -42,9 +42,21 @@ IE，Chrome，Firefox，Opera，Safari等（必须有独立研发的内核）。
 
 ECMA标准 —— 定义了JS的统一标准。
 
-[1]: Web_frontend_notes/Js_reference.md###解释性语言？	"什么是解释型语言"
+[1]: Js_reference.md	"什么是解释型语言"
 
-### js三阶段：
+case-sensitive. 大小写敏感。所以：只有true，没有True
+
+```javascript
+typeof(true);//-->boolean 
+typeof(True);//-->undefined
+
+typeof(-Infinity);//-->-Infinity
+typeof(infinity);//-->undefined
+```
+
+
+
+### JS三阶段：
 
 原生JS叫**ECMAScript**，只能提供数组的处理等功能。
 
@@ -63,7 +75,7 @@ ECMA标准 —— 定义了JS的统一标准。
    a = 100; //赋值
    
    var a = 10, //逗号
-   		b = 20，
+   		b = 20,
        c; //同时声明多个变量
    ```
 
@@ -76,7 +88,8 @@ ECMA标准 —— 定义了JS的统一标准。
 
    * 原始值（栈数据）- primitives types - **immutable** 不可改变
 
-     * Number, String, Boolean, undefined, null （5种）
+     * number, string, boolean, undefined, null （5种）
+     * （number中包含NaN，Infinity，-Infinity三个特殊值）
 
    * 引用值（堆数据） - Composite data type 复合型
 
@@ -85,20 +98,22 @@ ECMA标准 —— 定义了JS的统一标准。
    * 定义：
 
      ```javascript
-     var b = "";           //String
-     var c = true;//false  //Boolean
-     var d;                //undefined.声明未赋值，typeof(d)=undefined;
-     var e = null;         //占位(null是object)
+     var a = 123;          //1. number
+     var b = "";           //2. string
+     var c = true;//false  //3. boolean (注意都是小写)
+     var d;                //4. undefined.声明未赋值，typeof(d)是undefined;
+     var e = null;         //5. 占位(typeof(e)是object)
      
-     var arr = [1,2,3,false,"abc"]  //Array
-     var obj = {										 //Object
+     var arr = [1,2,3,false,"abc"]  //6. Array，typeof(arr)是object, 使用arr.isArray来判断数组
+     var obj = {						//7. Object
+       key  : values,//注意是逗号
        name : "xiaoliu",
        age  :  16,
        health: function(){
          age--;
        }
      }
-     function abc(){					//function
+     function abc(){				//8. function
        var a = 2;
      }
      ```
@@ -130,4 +145,180 @@ ECMA标准 —— 定义了JS的统一标准。
      ![arr2](imgs/array_type_core2.png)
 
      
+
+# 基本语法：
+
+1. 语句以“；”结束。
+2. js语法错误会导致后续代码终止，但不影响其他js代码块/文件。
+3. 书写规范，“=+/-”两边都有空格。
+
+```javascript
+function test(){}
+
+if(condition){  //条件为true时执行
+  	statements;
+}else if(condition){
+  	statements;
+} 
+
+//while循环
+while (condition){
+  	statements;
+}
+//do while
+do{
+  	statements;
+}while()
+
+//switch case       
+switch(expression) {
+    case x:
+      statements x;
+      break; //不加break的话，语句会把正确的语句执行后，返回后续值
+    case y:
+      statements y;
+      break;
+    default:
+      statements d;
+}
+
+//The break - "jumps out" of a loop.
+//The continue - "jumps over" one iteration in the loop.
+
+//for循环
+for (initialExpression; condition; incrementExpression){
+  	statements;
+}
+
+//for...in 语句
+for (variable in object) {
+  	statements
+}  
+
+// for...of 语句
+for (variable of object)
+  	statement
+// While for...in iterates over property names, for...of iterates over property values. for...in通过属性名来迭代；for...of通过属性值来迭代。
+
+//输入
+var score = parseInt(window.prompt("input:"));
+//输出
+document.write(score);
+console.log(score);
+```
+
+### 一、运算操作符：
+
+* `+  -  *  /  %  =  ()`  优先级`=`最弱，`()`最高。
+* `++  --`  a++，先执行语句后+1；++a，先+1后执行语句。
+* ` +=  -=  /=  *=  %=`
+
+1.  `+` （自左向右）
+   * 数学运算、字符串连接
+   * 任何数据类型 + 字符串 = 字符串
+   * 隐式：不能运算的，先number()，再运算
+     * `"a"+1+1` ---> `"a11"`
+     * `1+1+"a"+1` ---> `"2a1"`
+
+2. `/`
+   + `1/0` ---> `Infinity` （Infinity是number）
+   + `-1/0` ---> `-Infinity`
+   + `0/0` ---> `NaN`  (NaN是number)
+
+
+
+### JS运算符：
+
+运算必然有输出结果。
+
+1. 比较运算符：`>  <  >=  <=  ==  !=` 输出结果为**boolean值**。
+
+   ```javascript
+   //字符串相比，是字符串首字母的ascii码相比较
+   var a = "a" > "b" //---> a为false;
+   var a = "1" > "8" //---> a为false;
+   var a = "feng" > "deng" //---> true.
+   
+   //== 等于
+   var a = undefined == undefined; //true
+   var a = Infinity == Infinity; //true
+   var a = NaN == NaN; //false（NaN不等于任何数，包括自己）
+   ```
+
+2. 逻辑运算符：`&&  ||  !` 输出结果为**真实值**。
+
+   ```javascript
+   //&& 且
+   //左→右，依次判断,全为true时，返回最后一个表达式的值。
+   var a = 1 && 2+2; //4
+   var a = 0 && 2+2; //0  第一个表达式为false，返回第一个表达式的值。
+   
+   //|| 或
+   //左→右，依次判断,只要发现true，返回该表达式的值。
+   ```
+
+   ```javascript
+   //短路语句：
+   var data = ...;
+   data && fn(data) //如果data成功接收，则执行后面的function，比if写法更方便
+   
+   //用或写兼容：
+   div.onclick = function(e){
+     //e表示一个事件对象
+     //非IE浏览器，直接用e就可以读取，但IE中，必须用window.event
+     var event = e || window.event;
+   }
+   ```
+
+3. 转换为boolean都是False的值：
+
+   1. `undifined`
+   2. `null`
+   3. `""`（空串）
+   4. `0`
+   5. `false`
+
+### typeof()和类型转换
+
+|      |      typeof()       |   result   |
+| :--: | :-----------------: | :--------: |
+|  1   |  typeof( number )   |   number   |
+|  2   |  typeof( boolean )  |  boolean   |
+|  3   |  typeof( string )   |   string   |
+|  4   | typeof( undefiend ) | undefiend  |
+|  5   |   typeof( null )    | **object** |
+|  6   |   typeof( array )   | **object** |
+|  7   |  typeof( object )   | **object** |
+|  8   | typeof( function )  |  function  |
+|  9   | typeof( typeof(1) ) |   string   |
+
+1. number()
+
+```javascript
+Number();     		//0
+Number(123);  		//123
+Number(-Infinity);//-Infinity
+Number(NaN);  		//NaN
+Number("123");    //123  (string)
+Number("100abc"); //NaN  (string)
+Number("");       //0
+Number(true);     //1
+Number(undefined);//NaN
+Number([1,2,3]);  //NaN  (array)
+Number({});				//NaN  (object)
+Number(null);     //0
+Number(function(){});//NaN  (function)
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
