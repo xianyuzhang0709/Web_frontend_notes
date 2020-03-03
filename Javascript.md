@@ -257,12 +257,12 @@ console.log(score);
 
    ```javascript
    //&& 且
-   //左→右，依次判断,全为true时，返回最后一个表达式的值。
+   //左→右，依次判断，遇到false就返回该表达式的值，全为true时，返回最后一个表达式的值。
    var a = 1 && 2+2;               //4
-   var a = 0 && 2+2;               //0  第一个表达式为false，返回第一个表达式的值。
+   var a = 0 && 2+2;               //0
    
    //|| 或
-   //左→右，依次判断,只要发现true，返回该表达式的值。
+   //左→右，依次判断,只要发现true，就返回该表达式的值。
    ```
 
    ```javascript
@@ -303,9 +303,10 @@ typeof(for(){});           //报错
 typeof(typeof(1));         //string
 ```
 
+* typeof()一共可输出6种type：number, boolean, string, undefiend, object, function.
 * 1 - 5原始值，6 - 8引用值。
 
-1. **Number(mix)** - Convert different object values to their numbers。
+1. **Number(mix)** - Convert different object values to their numbers。（整个值是数字，或整体具有数字意义才可以转）
 
    ```javascript
    Number();               //==0      (空)
@@ -313,8 +314,10 @@ typeof(typeof(1));         //string
    Number(-Infinity);      //==-Infinity    (number - Infinity)
    Number(NaN);            //==NaN    (number - NaN)
    Number("456");          //==456    (string是纯数字的，可以转为数字，否则NaN)
+   Number("1,2,3")         //==NaN    (string，不具备数学意义)
    Number("100abc");       //==NaN    (string)
    Number("");             //==0      (string - 空串)
+   Number("  ");           //==0      (string - 带空格的空串)
    Number(true);           //==1      (boolean)
    Number(undefined);      //==NaN    (未赋值)
    Number([1,2,3]);        //==NaN    (array)
@@ -325,7 +328,7 @@ typeof(typeof(1));         //string
 
    * 以上输出结果，typeof()都是number。
 
-2. **parseInt(string, radix)** - 将一个字符串 string 转换为 radix 进制的整数， radix 为介于2-36之间的数。
+2. **parseInt(string, radix)** - 将一个字符串 string，以 radix（2-36）进制为基底，转为十进制integer。（第一个字符是number就是可以转）
 
    ```javascript
    parseInt();     	    	//==NaN    (空)
@@ -344,26 +347,140 @@ typeof(typeof(1));         //string
    parseInt(function(){}); //==NaN  (function)
    ```
 
-   * 注意，能转为整数的有：数字，字符串开头是数字的，array开头是数字的。看到数字位，遇到点停止。
+   * 如果radix没有，则默认开头为0x是十六进制；开头0是八进制，开头其他数字，则为十进制。
+   * 如果the first character 不能 converted to a number, then return NaN。
+   * 即，能转为整数的有：数字，字符串开头是数字的，array开头是数字的。看到数字位，遇到点停止。
 
    * parseInt向下取整。`Math.floor()`向下取整，`Math.ceil()`向上取整，`Math.round()`四舍五入取整。
-   * 以上输出结果，typeof()都是number。
 
-3. parseFloat(string) - 识别到最后一个数字位，且只能识别一个点。
+3. **parseFloat(string)** - 识别到最后一个数字位，且只能识别一个点。
 
    ```javascript
-   parseFloat("1.2.4flos"); //==1.2  typeof(a)==number
-   parseFloat(-Infinity);   //==-Infinity
-   parseFloat("456abc");    //==456
-   parseFloat("a100bc");    //==NaN
-   parseInt([1.9,2,3]);     //==1.9
+   parseFloat("1.2.4flos");   //==1.2  typeof(a)==number
+   parseFloat(-Infinity);     //==-Infinity
+   parseFloat("456abc");      //==456
+   parseFloat("a100bc");      //==NaN
+   parseFloat([1.9,2,3]);     //==1.9
    ```
 
-   * 猜想：parseInt(string)的意思是不是先把内容转化成string，再Int。为了证明猜想，先看看toString()是怎么做的。
+4. **String(mix)** - 把一切都转化成string
 
-4. toString(radix) - 
+   ```javascript
+   var a = String([1,2,3]);     //1,2,3
+   var b = String(function(){});//function(){}
+   var c = String(Infinity);    //Infinity
+   var d = String(null);        //null
+   var f = String();            //
+   var g = String("");          //
+   var demo = null + "";        //任何东西+空串，都可以返回其string形式
+   ```
 
+5. **Boolean()** - 转化成boolean
 
+   ```javascript
+   var a = Boolean([1,2,3]);     //true
+   var b = Boolean(function(){});//true
+   var c = Boolean(Infinity);    //true
+   var d = Boolean(null);        //false
+   var f = Boolean();            //false
+   var g = Boolean("");          //false
+   ```
 
+6. **.toString(radix)** - 返回一个该对象的字符串，radix是目标进制。将对象以十进制转化为radix进制。
 
+   ```javascript
+   var demo = [1,2,3];
+   var d = demo.toString();      //1,2,3
+   
+   //以下省略demo.toString():
+   var demo = {};                //[object Object]
+   var demo = undefiend;         //报错
+   var demo = null;              //报错
+   //一般用String()来做字符串操作，或+""，也可以转化为string。
+   ```
 
+   进制转换：
+
+   ```javascript
+   var a = 20;
+   var b = a.toString(8);         //24(8进制)
+   
+   //n进制 → 十进制: parseInt(string, radix);
+   //十进制 → n进制: toString(radix);
+   //例：2进制 to 16进制
+   var a = 10000;                 //a == 二进制10000
+   var b = parseInt(a, 2);        //b == 十进制16
+   var c = b.toString(16);        //c == 十六进制10
+   ```
+
+### 隐式类型转换：
+
+1. **isNaN()** - 确定一个值是不是NaN。
+
+   * 不是number的通过Number()转化为number，再判断。
+
+   ```javascript
+   isNaN(NaN);       // true
+   isNaN(undefined); // true
+   isNaN({});        // true
+   
+   isNaN(true);      // false
+   isNaN(null);      // false
+   isNaN(37);        // false
+   
+   // strings
+   isNaN("37");      // false: 可以被转换成数值37
+   isNaN("37.37");   // false: 可以被转换成数值37.37
+   isNaN("37,5");    // true: 不能转化成37
+   isNaN('123ABC');  // true:  parseInt("123ABC")的结果是 123, 但是Number("123ABC")结果是 NaN
+   isNaN("");        // false: 空字符串被转换成0
+   isNaN(" ");       // false: 包含空格的字符串被转换成0
+   
+   // dates
+   isNaN(new Date());                // false
+   isNaN(new Date().toString());     // true
+   
+   isNaN("blabla")   // true: "blabla"不能转换成数值
+                     // 转换成数值失败， 返回NaN
+   ```
+
+2. **`++  --  +(正) -(负)`**： 先用Number()转化
+
+3. **`+(加号)`**：左右只要有string，整个都变成string。
+
+4. **`-(减号) *(乘号) /(除号) %(余)`**：先Number()
+
+5. **&& || !**：判断用true/false判断，结果将对应表达式的**值**输出。
+
+6. **`> < >= <=`**：有number比较，则number优先，把两边都换成数字比；字符串则首字母ascii码比。
+
+   ```javascript
+   var a = "3" > 2;   //true
+   var a = "3" > "2"; //false
+   
+   var a = 10 > 5 > 3;//false, 从左到右判断，10>5返回true，true==1, 1>3则为false
+   ```
+
+7. `== !==` ：也有类型转换。
+
+   ```javascript
+   undefined > 0      //false
+   undefined < 0      //false
+   undefined == 0     //false
+   
+   null > 0           //false
+   null < 0           //false
+   null == 0          //false
+   
+   undefined == null  //true
+   
+   NaN == NaN         //false，NaN不等于任何，包括自己
+   ```
+
+8. 不发生类型转换的：绝对等于`===`和绝对不等于`!==`
+
+9. 报错：未定义的变量进行使用——必然报错；当且仅当typeof(未定义variable)时不报错。
+   * typeof(typeof(a)) == typeof("undefiend") == string
+   * num.toFix(3) 意思是，把num四舍五入，小数点后保留3位有效数字。
+
+### 函数function(){}
